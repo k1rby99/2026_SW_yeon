@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-coral: #e8927c;
+  --color-brand-coral-light: #f0a98f;
+  --color-brand-indigo: #5b6ee1;
+  --color-brand-indigo-light: #6b5fd6;
+  --color-brand-navy: #1b1b3a;
+  --color-surface: #fefcfa;
+
+  --font-sans: 'Noto Sans KR', system-ui, 'Segoe UI', Roboto, sans-serif;
+  /* 로고 워드마크("연")의 붓글씨체 인상을 반영하는 디스플레이 폰트 — 브랜드명/헤딩 전용 */
+  --font-display: 'Song Myung', 'Noto Serif KR', serif;
+}
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-brand-navy);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 로고 링의 코랄→인디고 그라디언트를 텍스트에 입힐 때 공용으로 사용 */
+.text-brand-gradient {
+  background-image: linear-gradient(135deg, var(--color-brand-coral) 0%, var(--color-brand-indigo) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}

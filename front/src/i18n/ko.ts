@@ -1,0 +1,181 @@
+// front_request.md §9 국제화 요구사항: "1차 버전은 한국어 단일 언어, 텍스트 하드코딩 대신
+// i18n key 구조 사전 적용 권장". 컴포넌트는 이 딕셔너리를 통해서만 사용자 노출 문자열에 접근한다.
+// 다국어 전환 시 locale별 딕셔너리를 추가하고 src/i18n/index.ts의 useTranslation만 바꾸면 된다.
+
+const ko = {
+  app: {
+    name: '연(緣)',
+    tagline: '우연을 설계하는 마이크로 커뮤니티 형성 AI Agent',
+  },
+
+  nav: {
+    home: '홈',
+    goals: '목표',
+    matches: '매칭',
+    profile: '프로필',
+  },
+
+  common: {
+    loading: '불러오는 중...',
+    retry: '다시 시도',
+    close: '닫기',
+    loadMore: '더 보기',
+    loadingMore: '불러오는 중...',
+    saving: '저장 중...',
+    submitting: '제출 중...',
+    save: '저장',
+    submit: '제출',
+    offlineBanner: '인터넷 연결이 끊겼어요. 연결을 확인해주세요.',
+    genericError: '처리 중 오류가 발생했어요. 다시 시도해주세요.',
+  },
+
+  auth: {
+    login: {
+      title: '로그인',
+      emailPlaceholder: '이메일',
+      passwordPlaceholder: '비밀번호',
+      emailRequired: '이메일을 입력해주세요.',
+      passwordRequired: '비밀번호를 입력해주세요.',
+      submitting: '로그인 중...',
+      submit: '로그인',
+      failed: '로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.',
+      goToSignup: '회원가입',
+    },
+    signup: {
+      title: '회원가입',
+      emailPlaceholder: '이메일',
+      passwordPlaceholder: '비밀번호',
+      emailRequired: '이메일을 입력해주세요.',
+      passwordMinLength: '비밀번호는 8자 이상이어야 합니다.',
+      submitting: '가입 중...',
+      submit: '회원가입',
+      failed: '회원가입에 실패했습니다.',
+      goToLogin: '이미 계정이 있으신가요? 로그인',
+    },
+  },
+
+  onboarding: {
+    title: '프로필을 채워주세요',
+    subtitle: '관심사와 역량을 기반으로 나에게 꼭 맞는 협업 상대를 찾아드려요.',
+    saveFailed: '온보딩 저장에 실패했습니다. 다시 시도해주세요.',
+  },
+
+  profileForm: {
+    interests: '관심사',
+    interestsStepLabel: '관심사를 선택하거나 입력하세요',
+    skills: '보유 역량',
+    skillsStepLabel: '보유 역량을 선택하거나 입력하세요',
+    projectHistory: '프로젝트 경험',
+    projectHistoryPlaceholder: '참여했던 프로젝트, 역할, 성과를 자유롭게 작성해주세요',
+    coldStartHint:
+      '💡 협업 이력이 없는 신규 회원님은 역량/관심사를 최대한 상세히 작성할수록 더 정확한 추천을 받을 수 있어요.',
+    collabStyleLabel: '협업 성향을 선택하세요',
+    collabStyles: ['주도형', '지원형', '균형형', '자율분산형'],
+    interestSuggestions: ['프론트엔드', 'UX 리서치', '데이터 분석', 'AI/ML', '창업', '디자인'],
+    skillSuggestions: ['React', 'Python', 'Figma', 'FastAPI', 'PostgreSQL', 'TypeScript'],
+    stepIndicator: (step: number, total: number) => `${step}/${total} 단계`,
+    prev: '이전',
+    next: '다음',
+    finish: '완료',
+  },
+
+  tagInput: {
+    addPlaceholder: '+ 직접입력',
+    removeAriaLabel: (tag: string) => `${tag} 태그 삭제`,
+  },
+
+  profilePage: {
+    title: '마이 프로필',
+    loading: '프로필 불러오는 중...',
+    saveSuccess: '프로필이 저장되었어요.',
+    saveFailed: '저장에 실패했어요. 다시 시도해주세요.',
+  },
+
+  visibility: {
+    label: '공개 범위',
+    public: '전체공개',
+    limited: '제한공개',
+    private: '비공개',
+    hint: '공개 범위는 후보 탐색 시 회원님이 노출되는 범위와 직결됩니다.',
+    privateWarning: '⚠ 비공개로 설정하면 다른 사용자의 추천에 노출되지 않아요.',
+  },
+
+  goalForm: {
+    categories: ['공모전', '스터디', '창업', '프로젝트'],
+    label: '어떤 목표를 이루고 싶으신가요?',
+    placeholder: '예: 2026 SW 경진대회에 출품할 AI 서비스를 함께 만들 프론트엔드 개발자를 찾고 있어요',
+    submitting: '등록 중...',
+    submit: '추천받기',
+  },
+
+  goalPipeline: {
+    checking: '파이프라인 상태 확인 중...',
+    timedOut: '추천 생성이 예상보다 오래 걸리고 있어요.',
+    failed: '추천 생성에 실패했습니다.',
+    pollingLabel: '추천 생성 파이프라인 (2초 간격 폴링)',
+    steps: ['프로필 분석', '목표·역량 격차 분석', '후보 탐색 및 보완도 채점'],
+    done: '추천 리스트 준비 완료!',
+  },
+
+  goalsPage: {
+    title: '목표 등록',
+    createFailed: '목표 등록에 실패했습니다.',
+    historyTitle: '지난 목표 이력',
+  },
+
+  home: {
+    title: '추천',
+    emptyNoCandidatesTitle: '아직 적합한 후보가 없어요',
+    emptyNoCandidatesDescription: '조건에 맞는 협업 상대가 나타나면 알려드릴게요.',
+    emptyNoGoalTitle: '목표를 먼저 등록해주세요',
+    emptyNoGoalDescription: '목표를 등록하면 보완형 협업 상대를 추천해드려요.',
+    goToGoals: '목표 등록하러 가기',
+  },
+
+  recommendationDetail: {
+    back: '← 뒤로',
+    candidate: '협업 후보',
+    score: '보완도 점수',
+    reason: '추천 근거',
+    profileSummary: '후보 프로필 요약 (공개 범위 내)',
+    skills: '보유 역량',
+    interests: '관심사',
+    loading: '상세 정보를 불러오는 중...',
+    notFoundTitle: '추천을 찾을 수 없어요',
+    notFoundDescription: '이미 처리되었거나 만료된 추천일 수 있어요.',
+    reject: '거절',
+    accept: '수락',
+    acceptSuccess: '매칭이 성사되었어요!',
+    rejectSuccess: '추천을 거절했어요.',
+    alreadyResolved: '이미 처리된 추천입니다.',
+  },
+
+  matchesPage: {
+    title: '나의 매칭',
+    active: '진행중',
+    ended: '종료됨',
+    emptyTitle: '매칭 내역이 없어요',
+    emptyDescription: '추천을 수락하면 이곳에 표시돼요.',
+    defaultCounterpart: '협업 상대',
+    giveFeedback: '피드백 남기기',
+    endMatch: '종료하기',
+    endConfirm: '이 매칭을 종료할까요? 종료 후에는 되돌릴 수 없어요.',
+    endSuccess: '매칭을 종료했어요.',
+    endFailed: '매칭 종료에 실패했어요. 다시 시도해주세요.',
+    timelineOngoing: '(진행중)',
+  },
+
+  guard: {
+    checkingProfile: '프로필 확인 중...',
+  },
+
+  feedback: {
+    title: '협업 만족도를 평가해주세요',
+    commentPlaceholder: '코멘트를 남겨주세요 (선택)',
+    disclosure: '이 평가는 다음 추천 품질 개선에 반영됩니다',
+    submitSuccess: '피드백이 제출되었어요. 감사합니다!',
+    submitFailed: '피드백 제출에 실패했어요.',
+  },
+} as const;
+
+export default ko;
