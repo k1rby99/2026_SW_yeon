@@ -14,6 +14,7 @@ import { RecommendationDetailPage } from './pages/RecommendationDetailPage';
 import { MatchesPage } from './pages/MatchesPage';
 import { FeedbackPage } from './pages/FeedbackPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { IntroScreen } from './components/common/IntroScreen';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,6 +30,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
+          <Route path="/welcome" element={<IntroScreen />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
 

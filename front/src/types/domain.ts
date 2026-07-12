@@ -9,6 +9,12 @@ export interface Profile {
   projectHistory: string[];
   visibilityScope: 'public' | 'limited' | 'private';
   onboardingCompleted: boolean;
+  bio?: string;
+  socialLinks?: {
+    blog?: string;
+    instagram?: string;
+    github?: string;
+  };
 }
 
 export type GoalStatus = 'processing' | 'completed' | 'failed';
