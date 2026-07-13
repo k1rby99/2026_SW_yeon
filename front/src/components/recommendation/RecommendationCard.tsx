@@ -1,39 +1,45 @@
+import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Recommendation } from '../../types/domain';
 import { useTranslation } from '../../i18n';
 
-// RecommendationCard.tsx — complementScore, gapTags 배지 (FR-5.1, FR-5.2)
+const AVATAR_TONES = [
+  'linear-gradient(145deg, #f3b4ad, #d986a3)',
+  'linear-gradient(145deg, #a9afe9, #7f83c9)',
+  'linear-gradient(145deg, #a9d8cf, #75aea9)',
+  'linear-gradient(145deg, #e8c29d, #d69a86)',
+] as const;
+
 export function RecommendationCard({ recommendation }: { recommendation: Recommendation }) {
   const { t } = useTranslation();
+  const number = Number(recommendation.candidateId.match(/\d+/)?.[0] ?? 1);
+  const name = t.home.candidateNames[(number - 1) % t.home.candidateNames.length];
+  const role = recommendation.candidateProfileSummary.skillTags[0] ?? t.home.defaultRole;
+
   return (
-    <Link
-      to={`/recommendations/${recommendation.id}`}
-      className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition-shadow hover:border-brand-indigo/40 hover:shadow-md"
-    >
-      <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-br from-brand-coral to-brand-indigo p-[2px]">
-        <div className="h-full w-full rounded-full bg-white" />
-      </div>
-      <div className="flex-1">
-        <div className="flex flex-wrap gap-1">
-          {recommendation.gapTags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full bg-brand-coral/15 px-2 py-0.5 text-[10px] font-semibold text-brand-navy"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-        <p className="mt-1 text-xs text-neutral-500">
-          {recommendation.candidateProfileSummary.skillTags.slice(0, 3).join(' · ')}
-        </p>
-      </div>
-      <div
-        className="rounded-full bg-gradient-to-r from-brand-coral to-brand-indigo px-3 py-1 text-xs font-bold text-white"
-        aria-label={`${t.recommendationDetail.score} ${recommendation.complementScore}%`}
+    <Link to={`/recommendations/${recommendation.id}`} className="home-profile-card">
+      <span
+        className="home-profile-avatar"
+        style={{ background: AVATAR_TONES[(number - 1) % AVATAR_TONES.length] }}
+        aria-hidden="true"
       >
-        {recommendation.complementScore}%
-      </div>
+        {name.slice(0, 1)}
+      </span>
+
+      <span className="home-profile-content">
+        <span className="home-profile-heading">
+          <strong>{name}</strong>
+          <span>{role}</span>
+        </span>
+        <span className="home-profile-tags">
+          {recommendation.gapTags.slice(0, 2).map((tag) => <span key={tag}>{tag}</span>)}
+        </span>
+        <span className="home-match-score">
+          {t.home.complementMatch} <strong>{recommendation.complementScore}%</strong>
+        </span>
+      </span>
+
+      <span className="home-profile-arrow" aria-hidden="true"><ChevronRight /></span>
     </Link>
   );
 }

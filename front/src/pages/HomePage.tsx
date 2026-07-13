@@ -1,80 +1,82 @@
-import { Link } from 'react-router-dom';
-import { RecommendationCard } from '../components/recommendation/RecommendationCard';
+import { ArrowRight, Bell } from 'lucide-react';
+import { RoomCard } from '../components/room/RoomCard';
 import { EmptyState } from '../components/common/EmptyState';
 import { SkeletonCard } from '../components/common/SkeletonCard';
-import { useRecommendations } from '../hooks/useRecommendations';
+import { useRecommendedRooms } from '../hooks/useRooms';
 import { useGoalHistory } from '../hooks/useGoals';
 import { useTranslation } from '../i18n';
 
-// S5 추천 리스트 — front_request.md FR-5.1~5.4
-// 카드 그리드: 모바일 1열 / sm 2열 / lg 3열 (§9 반응형 요구사항)
+const CONTEST_IMAGES = [
+  '/contests/ai-innovation.png',
+  '/contests/public-data.png',
+  '/contests/startup-design.png',
+] as const;
+
 export function HomePage() {
   const { t } = useTranslation();
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useRecommendations();
+  const { data, isLoading } = useRecommendedRooms();
   const { data: goals } = useGoalHistory();
 
-  const recommendations = data?.pages.flatMap((page) => page.items) ?? [];
+  const recommendations = data?.items ?? [];
   const hasRegisteredGoal = (goals?.length ?? 0) > 0;
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-3 px-6 py-8 md:px-10 md:py-10">
-        <h1 className="text-lg font-bold text-brand-navy">{t.home.title}</h1>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <SkeletonCard key={i} />
+  return (
+    <div className="home-page">
+      <header className="home-header">
+        <div>
+          <p>{t.home.eyebrow}</p>
+          <h1>{t.home.greeting}</h1>
+        </div>
+        <button type="button" className="home-notification" aria-label={t.home.notifications}>
+          <Bell aria-hidden="true" />
+          <span aria-hidden="true" />
+        </button>
+      </header>
+
+      <section className="home-section">
+        <div className="home-section-heading">
+          <h2>{t.home.contestsTitle}</h2>
+          <span>{t.home.swipeHint}</span>
+        </div>
+        <div className="home-contest-list">
+          {t.home.contests.map((contest, index) => (
+            <article className="home-contest-card" key={contest.title}>
+              <img src={CONTEST_IMAGES[index]} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
+              <div>
+                <span className="home-contest-category">{contest.category}</span>
+                <h3>{contest.title}</h3>
+                <span className="home-contest-deadline">{contest.deadline}</span>
+              </div>
+            </article>
           ))}
         </div>
-      </div>
-    );
-  }
+      </section>
 
-  if (recommendations.length === 0) {
-    // EC-2: "목표 미등록" vs "적합 후보 없음" 사유별 분기
-    return (
-      <div className="px-6 py-8 md:px-10 md:py-10">
-        {hasRegisteredGoal ? (
-          <EmptyState
-            title={t.home.emptyNoCandidatesTitle}
-            description={t.home.emptyNoCandidatesDescription}
-          />
+      <section className="home-section home-recommendation-section">
+        <div className="home-section-heading">
+          <div>
+            <h2>{t.home.recommendationsTitle}</h2>
+            <p>{t.home.recommendationsSubtitle}</p>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="home-profile-list">
+            {Array.from({ length: 3 }).map((_, index) => <SkeletonCard key={index} />)}
+          </div>
+        ) : recommendations.length > 0 ? (
+          <div className="home-room-list">
+            {recommendations.map((room) => <RoomCard key={room.id} room={room} compact />)}
+          </div>
         ) : (
           <EmptyState
-            title={t.home.emptyNoGoalTitle}
-            description={t.home.emptyNoGoalDescription}
-            action={
-              <Link
-                to="/goals"
-                className="mt-2 rounded-full bg-gradient-to-r from-brand-coral to-brand-indigo px-4 py-1.5 text-xs font-semibold text-white shadow-[0_6px_16px_-8px_rgba(91,110,225,0.6)] transition-opacity hover:opacity-90"
-              >
-                {t.home.goToGoals}
-              </Link>
-            }
+            title={hasRegisteredGoal ? t.home.emptyNoCandidatesTitle : t.home.emptyNoGoalTitle}
+            description={hasRegisteredGoal ? t.home.emptyNoCandidatesDescription : t.home.emptyNoGoalDescription}
           />
         )}
-      </div>
-    );
-  }
 
-  return (
-    <div className="flex flex-col gap-4 px-6 py-8 md:px-10 md:py-10">
-      <h1 className="text-lg font-bold text-brand-navy">{t.home.title}</h1>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {recommendations.map((rec) => (
-          <RecommendationCard key={rec.id} recommendation={rec} />
-        ))}
-      </div>
-
-      {hasNextPage && (
-        <button
-          type="button"
-          onClick={() => fetchNextPage()}
-          disabled={isFetchingNextPage}
-          className="mt-2 rounded-lg border border-neutral-300 py-2 text-xs text-neutral-500 disabled:opacity-50"
-        >
-          {isFetchingNextPage ? t.common.loadingMore : t.common.loadMore}
-        </button>
-      )}
+        {data?.nextCursor && <button type="button" className="home-load-more">{t.common.loadMore}<ArrowRight aria-hidden="true" /></button>}
+      </section>
     </div>
   );
 }

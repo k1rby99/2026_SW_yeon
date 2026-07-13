@@ -2,6 +2,9 @@
 
 2026 SW 디지털 경진대회 프로젝트입니다. 프론트엔드와 백엔드를 한 저장소에서 관리하는 모노레포 구조입니다.
 
+프론트엔드 디자인과 에이전트 작업 규칙은 [`docs/FRONTEND_STYLE_GUIDE.md`](docs/FRONTEND_STYLE_GUIDE.md)를 참고합니다.
+인연 방 중심의 백엔드 API 계약은 [`docs/BACKEND_API_CONTRACT.md`](docs/BACKEND_API_CONTRACT.md)를 참고합니다.
+
 ## 디렉터리 구조
 
 ```text

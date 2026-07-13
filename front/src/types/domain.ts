@@ -67,3 +67,83 @@ export interface PaginatedResponse<T> {
   size: number;
   hasMore: boolean;
 }
+
+export type RoomType = 'competition' | 'hackathon' | 'study' | 'project' | 'coffee_chat' | 'networking';
+export type RoomStatus = 'recruiting' | 'active' | 'ended';
+export type MembershipRole = 'owner' | 'member' | null;
+export type ApplicationStatus = 'none' | 'pending' | 'approved' | 'rejected';
+
+export interface ConnectionRoom {
+  id: string;
+  title: string;
+  type: RoomType;
+  summary: string;
+  imageUrl?: string;
+  tags: string[];
+  requiredRoles: string[];
+  status: RoomStatus;
+  memberCount: number;
+  capacity: number;
+  matchScore?: number;
+  deadline?: string;
+  owner: { id: string; name: string };
+  membershipRole: MembershipRole;
+  applicationStatus: ApplicationStatus;
+  visibility?: 'public' | 'private';
+  applicationMode?: 'approval' | 'instant';
+  meetingStyle?: 'online' | 'offline' | 'hybrid';
+  location?: string;
+  notice?: string;
+  createdAt: string;
+}
+
+export interface GoalAnalysis {
+  id: string;
+  normalizedGoal: string;
+  keywords: string[];
+  suggestedRoomType: RoomType;
+  suggestedRoles: string[];
+  recommendedRoomIds: string[];
+}
+
+export interface RoomUpsertPayload {
+  title: string;
+  type: RoomType;
+  summary: string;
+  tags: string[];
+  requiredRoles: string[];
+  capacity: number;
+  deadline?: string;
+  visibility: 'public' | 'private';
+  applicationMode: 'approval' | 'instant';
+  meetingStyle: 'online' | 'offline' | 'hybrid';
+  location?: string;
+  notice?: string;
+}
+
+export interface RoomCandidate {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  skillTags: string[];
+  interests: string[];
+  matchScore: number;
+  reason: string;
+  invitationStatus: 'none' | 'pending' | 'accepted' | 'declined';
+}
+
+export interface RoomApplication {
+  id: string;
+  applicant: RoomCandidate;
+  message: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+}
+
+export interface RoomMessage {
+  id: string;
+  sender: { id: string; name: string };
+  content: string;
+  createdAt: string;
+}

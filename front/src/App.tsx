@@ -15,6 +15,11 @@ import { MatchesPage } from './pages/MatchesPage';
 import { FeedbackPage } from './pages/FeedbackPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { IntroScreen } from './components/common/IntroScreen';
+import { RoomDetailPage } from './pages/RoomDetailPage';
+import { RoomEditorPage } from './pages/RoomEditorPage';
+import { RoomInvitePage } from './pages/RoomInvitePage';
+import { RoomApplicationsPage } from './pages/RoomApplicationsPage';
+import { RoomChatPage } from './pages/RoomChatPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,6 +50,12 @@ function App() {
                 <Route path="/recommendations/:id" element={<RecommendationDetailPage />} />
                 <Route path="/matches" element={<MatchesPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/rooms/:id" element={<RoomDetailPage />} />
+                <Route path="/rooms/new" element={<RoomEditorPage />} />
+                <Route path="/rooms/:id/settings" element={<RoomEditorPage />} />
+                <Route path="/rooms/:id/invite" element={<RoomInvitePage />} />
+                <Route path="/rooms/:id/applications" element={<RoomApplicationsPage />} />
+                <Route path="/rooms/:id/chat" element={<RoomChatPage />} />
               </Route>
             </Route>
           </Route>
