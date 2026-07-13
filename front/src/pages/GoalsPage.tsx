@@ -1,52 +1,77 @@
 import { useState } from 'react';
+import { BrainCircuit, Plus, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { GoalForm } from '../components/goal/GoalForm';
-import { GoalPipelineStatus } from '../components/goal/GoalPipelineStatus';
-import { useCreateGoal, useGoalHistory } from '../hooks/useGoals';
+import { RoomCard } from '../components/room/RoomCard';
+import { useAnalyzeGoal, useRecommendedRooms } from '../hooks/useRooms';
 import { useUiStore } from '../store/uiStore';
 import { useTranslation } from '../i18n';
 
-// S4 목표 등록 — front_request.md FR-4.1~4.3
 export function GoalsPage() {
-  const navigate = useNavigate();
   const { t } = useTranslation();
-  const createGoal = useCreateGoal();
-  const { data: history } = useGoalHistory();
-  const pushToast = useUiStore((s) => s.pushToast);
-  const [activeGoalId, setActiveGoalId] = useState<string | null>(null);
+  const pushToast = useUiStore((state) => state.pushToast);
+  const navigate = useNavigate();
+  const analyzeGoal = useAnalyzeGoal();
+  const { data: rooms } = useRecommendedRooms();
+  const [text, setText] = useState('');
+  const [keywords, setKeywords] = useState<string[]>([]);
 
-  const handleSubmit = async (values: { text: string; category: string }) => {
+  const toggleKeyword = (keyword: string) => {
+    setKeywords((current) => current.includes(keyword) ? current.filter((item) => item !== keyword) : [...current, keyword]);
+  };
+
+  const submit = async () => {
     try {
-      const goal = await createGoal.mutateAsync(values);
-      setActiveGoalId(goal.id);
+      await analyzeGoal.mutateAsync({ text, keywords });
     } catch {
       pushToast(t.goalsPage.createFailed, 'error');
     }
   };
 
+  const recommended = rooms?.items.filter((room) => analyzeGoal.data?.recommendedRoomIds.includes(room.id)) ?? [];
+
   return (
-    <div className="flex flex-col gap-6 px-6 py-8 md:mx-auto md:max-w-xl md:px-10 md:py-10">
-      <h1 className="text-lg font-bold text-brand-navy">{t.goalsPage.title}</h1>
+    <div className="tab-page goal-page">
+      <header className="tab-page-header">
+        <p>{t.goalsPage.eyebrow}</p>
+        <h1>{t.goalsPage.title}</h1>
+        <span>{t.goalsPage.subtitle}</span>
+      </header>
 
-      <GoalForm onSubmit={handleSubmit} submitting={createGoal.isPending} />
-
-      {activeGoalId && (
-        <GoalPipelineStatus
-          goalId={activeGoalId}
-          onRetry={() => setActiveGoalId(null)}
-          onDone={() => navigate('/')}
-        />
-      )}
-
-      {history && history.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <p className="text-xs font-semibold text-neutral-600">{t.goalsPage.historyTitle}</p>
-          {history.map((g) => (
-            <div key={g.id} className="rounded-lg border border-neutral-200 p-3 text-xs text-neutral-600">
-              {g.text}
-            </div>
+      <section className="goal-composer">
+        <div className="goal-keywords" aria-label={t.goalsPage.keywordLabel}>
+          {t.goalsPage.keywords.map((keyword) => (
+            <button key={keyword} type="button" onClick={() => toggleKeyword(keyword)} className={keywords.includes(keyword) ? 'is-selected' : ''} aria-pressed={keywords.includes(keyword)}>
+              {keyword}
+            </button>
           ))}
         </div>
+        <label className="goal-textarea">
+          <span>{t.goalsPage.freeTextLabel}</span>
+          <textarea value={text} onChange={(event) => setText(event.target.value)} rows={5} placeholder={t.goalForm.placeholder} />
+        </label>
+        <button type="button" className="goal-analyze-button" disabled={(!text.trim() && keywords.length === 0) || analyzeGoal.isPending} onClick={submit}>
+          <BrainCircuit aria-hidden="true" />
+          {analyzeGoal.isPending ? t.goalsPage.analyzing : t.goalsPage.analyze}
+        </button>
+      </section>
+
+      {analyzeGoal.data && (
+        <section className="goal-result">
+          <div className="goal-result-summary">
+            <Sparkles aria-hidden="true" />
+            <div><span>{t.goalsPage.analysisResult}</span><strong>{analyzeGoal.data.normalizedGoal}</strong></div>
+          </div>
+          <div className="goal-result-tags">
+            {analyzeGoal.data.keywords.map((keyword) => <span key={keyword}>#{keyword}</span>)}
+          </div>
+          <div className="goal-result-actions">
+            <button type="button" onClick={() => navigate('/rooms/new', { state: { analysis: analyzeGoal.data } })}><Plus aria-hidden="true" />{t.goalsPage.createRoom}</button>
+          </div>
+          <div className="goal-recommended-rooms">
+            <h2>{t.goalsPage.recommendedRooms}</h2>
+            {recommended.map((room) => <RoomCard key={room.id} room={room} compact />)}
+          </div>
+        </section>
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { Handshake, Home, Target, UserRound } from 'lucide-react';
 import { ErrorToast } from '../components/common/ErrorToast';
 import { OfflineBanner } from '../components/common/OfflineBanner';
 import { Logo } from '../components/common/Logo';
@@ -9,35 +10,39 @@ import { useTranslation } from '../i18n';
 export function AppLayout() {
   const { t } = useTranslation();
   const tabs = [
-    { to: '/', label: t.nav.home },
-    { to: '/goals', label: t.nav.goals },
-    { to: '/matches', label: t.nav.matches },
-    { to: '/profile', label: t.nav.profile },
+    { to: '/', label: t.nav.home, icon: Home },
+    { to: '/goals', label: t.nav.goals, icon: Target },
+    { to: '/matches', label: t.nav.matches, icon: Handshake },
+    { to: '/profile', label: t.nav.profile, icon: UserRound },
   ];
 
   return (
-    <div className="mx-auto flex min-h-svh w-full max-w-6xl flex-col bg-surface md:flex-row">
+    <div className="mx-auto flex min-h-svh w-full max-w-6xl flex-col bg-white md:flex-row">
       <nav className="hidden w-56 flex-shrink-0 flex-col gap-1 border-r border-neutral-200 p-4 md:flex">
         <div className="mb-6 flex items-center gap-2 px-2">
           <Logo size="sm" className="shadow-sm" />
           <span className="font-display text-lg text-brand-navy">{t.app.name}</span>
         </div>
-        {tabs.map((tab) => (
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
           <NavLink
             key={tab.to}
             to={tab.to}
             end={tab.to === '/'}
             className={({ isActive }) =>
-              `rounded-lg border-l-[3px] px-3 py-2 text-sm font-medium transition-colors ${
+              `flex items-center gap-3 rounded-lg border-l-[3px] px-3 py-2 text-sm font-medium transition-colors ${
                 isActive
                   ? 'border-brand-indigo bg-gradient-to-r from-brand-coral/10 to-brand-indigo/10 text-brand-indigo'
                   : 'border-transparent text-neutral-500 hover:text-brand-navy'
               }`
             }
           >
+            <Icon className="h-4 w-4" aria-hidden="true" />
             {tab.label}
           </NavLink>
-        ))}
+          );
+        })}
       </nav>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -47,30 +52,27 @@ export function AppLayout() {
         </main>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 mx-auto flex w-full max-w-md border-t border-neutral-200 bg-white/95 backdrop-blur md:hidden">
-        {tabs.map((tab) => (
+      <nav className="app-bottom-nav md:hidden" aria-label="하단 메뉴">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
           <NavLink
             key={tab.to}
             to={tab.to}
             end={tab.to === '/'}
-            className={({ isActive }) =>
-              `flex flex-1 flex-col items-center gap-1 py-3 text-xs font-medium ${
-                isActive ? 'text-brand-indigo' : 'text-neutral-400'
-              }`
-            }
+            className="app-bottom-nav-link"
           >
             {({ isActive }) => (
               <>
-                <span
-                  className={`h-1 w-1 rounded-full transition-opacity ${
-                    isActive ? 'bg-gradient-to-r from-brand-coral to-brand-indigo opacity-100' : 'opacity-0'
-                  }`}
-                />
-                {tab.label}
+                <span className={`app-bottom-nav-icon ${isActive ? 'is-active' : ''}`}>
+                  <Icon aria-hidden="true" />
+                </span>
+                <span className={isActive ? 'is-active' : ''}>{tab.label}</span>
               </>
             )}
           </NavLink>
-        ))}
+          );
+        })}
       </nav>
 
       <ErrorToast />
