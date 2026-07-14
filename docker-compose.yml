@@ -3,19 +3,42 @@ services:
     build:
       context: ./back
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      # 운영에서는 반드시 교체한다.
+      YEON_SECRET_KEY: dev-secret-change-me
+      YEON_DATABASE_URL: sqlite:////app/yeon.db
+      YEON_CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+      YEON_SEED_DEMO_DATA: "true"
+      # mock = 규칙 기반 목업(키 불필요). agent = Anthropic API 기반 4개 에이전트.
+      #   ANTHROPIC_API_KEY=sk-ant-... YEON_ANALYSIS_ENGINE=agent docker compose up
+      YEON_ANALYSIS_ENGINE: "${YEON_ANALYSIS_ENGINE:-mock}"
+      YEON_ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
     ports:
       - "8000:8000"
     volumes:
       - ./back:/app
+    # python:3.13-slim에는 curl이 없어 표준 라이브러리로 확인한다.
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen("http://localhost:8000/api/health")
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
   frontend:
     build:
       context: ./front
     command: npm run dev -- --host 0.0.0.0
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     environment:
-      VITE_API_MOCKING: "true"
+      # 기본값은 실제 백엔드. UI만 따로 보려면 VITE_API_MOCKING=true 로 목업을 켠다.
+      VITE_API_MOCKING: "${VITE_API_MOCKING:-false}"
       VITE_API_TARGET: http://backend:8000
     ports:
       - "5173:5173"

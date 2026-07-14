@@ -73,7 +73,6 @@ const STRENGTHS: StrengthOption[] = [
   { id: 'leadership', label: '리더십' },
 ];
 
-const LEVELS = ['초급', '중급', '고급'] as const;
 type StrengthLevel = 1 | 2 | 3;
 
 function getSavedTopics(): string[] {
@@ -157,14 +156,20 @@ export function OnboardingPage() {
   const handleComplete = async () => {
     const topicLabels = TOPICS.filter((item) => selectedTopics.includes(item.id)).map((item) => item.label);
     const goalLabels = GOALS.filter((item) => selectedGoals.includes(item.id)).map((item) => item.label);
-    const strengthLabels = STRENGTHS.filter((item) => strengthLevels[item.id]).map(
-      (item) => `${item.label} (${LEVELS[strengthLevels[item.id] - 1]})`,
-    );
+    const selectedStrengths = STRENGTHS.filter((item) => strengthLevels[item.id]);
+    // 태그는 이름만, 숙련도는 strengths에 구조화해 보낸다.
+    // "React (능숙)"처럼 한 문자열에 섞으면 추천 엔진이 태그를 제대로 비교하지 못한다.
+    const strengthLabels = selectedStrengths.map((item) => item.label);
 
     try {
       await createProfile.mutateAsync({
         interests: topicLabels,
         skillTags: strengthLabels,
+        strengths: selectedStrengths.map((item) => ({
+          key: item.id,
+          label: item.label,
+          level: strengthLevels[item.id],
+        })),
         projectHistory: goalLabels,
         collabStyle: '상호보완형',
         visibilityScope: 'public',

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BrainCircuit, Plus, Sparkles } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RoomCard } from '../components/room/RoomCard';
+import { AnalyzingState } from '../components/common/AnalyzingState';
 import { useAnalyzeGoal, useRecommendedRooms } from '../hooks/useRooms';
 import { useUiStore } from '../store/uiStore';
 import { useTranslation } from '../i18n';
@@ -58,7 +59,13 @@ export function GoalsPage() {
         </button>
       </section>
 
-      {analyzeGoal.data && (
+      {analyzeGoal.isPending && (
+        <section className="goal-result">
+          <AnalyzingState title={t.analyzing.goal.title} steps={t.analyzing.goal.steps} showHint={false} />
+        </section>
+      )}
+
+      {!analyzeGoal.isPending && analyzeGoal.data && (
         <section className="goal-result">
           <div className="goal-result-summary">
             <Sparkles aria-hidden="true" />

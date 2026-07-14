@@ -1,6 +1,6 @@
 import { ArrowLeft, ChevronRight, MessageCircle, Settings2, UserPlus, UsersRound } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
-import { LoadingSpinner } from '../components/common/LoadingSpinner';
+import { AnalyzingState } from '../components/common/AnalyzingState';
 import { useApplyToRoom, useRoom, useRoomMembers } from '../hooks/useRooms';
 import { useUiStore } from '../store/uiStore';
 import { useTranslation } from '../i18n';
@@ -13,7 +13,8 @@ export function RoomDetailPage() {
   const { data: members } = useRoomMembers(joined ? id : undefined);
   const apply = useApplyToRoom();
   const pushToast = useUiStore((state) => state.pushToast);
-  if (isLoading || !room) return <LoadingSpinner />;
+  // 참여하지 않은 방은 적합도를 AI가 계산하므로 첫 조회가 느리다.
+  if (isLoading || !room) return <div className="room-detail-page"><AnalyzingState title={t.analyzing.room.title} steps={t.analyzing.room.steps} /></div>;
   return <div className="room-detail-page">
     <Link to={joined ? '/matches' : '/'} className="room-detail-back"><ArrowLeft />{t.common.back}</Link>
     {room.imageUrl && <img src={room.imageUrl} alt="" className="room-detail-cover" />}

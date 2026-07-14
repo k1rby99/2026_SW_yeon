@@ -4,7 +4,8 @@ import './index.css'
 import App from './App.tsx'
 
 async function prepare() {
-  const shouldMock = import.meta.env.DEV && import.meta.env.VITE_API_MOCKING !== 'false'
+  // 기본값은 실제 백엔드. MSW 목업은 VITE_API_MOCKING=true 로 명시할 때만 켠다.
+  const shouldMock = import.meta.env.DEV && import.meta.env.VITE_API_MOCKING === 'true'
 
   if (shouldMock) {
     const { worker } = await import('./mocks/browser')

@@ -210,6 +210,34 @@ interface ConnectionRoom {
 
 내가 방장이거나 참여자인 방을 조회한다. `status`는 `recruiting`, `active`, `ended`를 지원한다.
 
+### `GET /api/rooms/{roomId}/members`
+
+해당 인연의 참여자만 조회할 수 있다. 목록 화면에 필요한 공개 요약 정보만 반환한다.
+
+```json
+[
+  {
+    "id": "user-2",
+    "name": "박지후",
+    "role": "프로덕트 매니저",
+    "bio": "문제를 구조화하고 팀이 같은 목표를 보도록 돕습니다.",
+    "skillTags": ["서비스 기획", "사용자 인터뷰", "데이터 분석"],
+    "isOwner": false,
+    "joinedAt": "2026-06-05T09:00:00Z"
+  }
+]
+```
+
+### `GET /api/rooms/{roomId}/members/{memberId}`
+
+참여자 프로필 상세를 반환한다. `interests`, `collabStyle`, `projectHistory`, `socialLinks`가 추가되며, 프로필 공개 범위에 따라 허용된 필드만 포함한다.
+
+- 요청자가 해당 인연의 참여자가 아니면 `403 FORBIDDEN`
+- 대상 사용자가 해당 인연의 참여자가 아니면 `404 MEMBER_NOT_FOUND`
+- `isOwner`는 사용자 전역 속성이 아니라 해당 인연의 역할을 기준으로 계산
+- 이메일, 전화번호와 비공개 소셜 링크는 반환하지 않음
+- 종료된 인연도 참여 이력이 있는 사용자에게는 읽기 전용으로 제공
+
 ### `GET /api/rooms/{roomId}/messages`
 
 참여자만 접근할 수 있다. 커서 페이지네이션을 사용한다.
@@ -258,3 +286,53 @@ socialLinks: { blog?: string; instagram?: string; github?: string };
 - 사용자가 볼 수 없는 비공개 프로필 정보는 응답에서 제거한다.
 - 참여 승인, 정원 변경, 상태 변경은 동시성 검사를 수행한다.
 - 프론트 MSW 핸들러와 백엔드 테스트 픽스처는 동일한 예시 필드를 유지한다.
+
+## 8. 공고와 공모전
+
+### `GET /api/opportunities`
+
+공고와 공모전 목록을 반환한다.
+
+쿼리:
+
+- `type`: `contest` 또는 `announcement`
+- `featured`: 홈 추천 노출 여부
+- `cursor`, `size`: 운영 데이터에서는 커서 페이지네이션 적용
+
+응답:
+
+```json
+{
+  "items": [
+    {
+      "id": "op-ai-innovation",
+      "type": "contest",
+      "status": "open",
+      "category": "AI · 소프트웨어",
+      "title": "2026 AI 서비스 아이디어 경진대회",
+      "organizer": "한국소프트웨어진흥원",
+      "summary": "생성형 AI 기반 서비스 아이디어를 모집합니다.",
+      "imageUrl": "https://cdn.example.com/poster.png",
+      "tags": ["AI", "서비스 기획", "프로토타입"],
+      "deadline": "2026-07-26",
+      "period": "2026.07.01 - 2026.07.26",
+      "eligibility": "대학생 및 만 34세 이하 청년, 2~5인 팀",
+      "benefits": ["대상 500만원", "전문가 멘토링"],
+      "officialUrl": "https://example.com/notice/1",
+      "featured": true
+    }
+  ]
+}
+```
+
+### `GET /api/opportunities/{opportunityId}`
+
+공고 상세를 반환한다. 삭제되거나 비공개 처리된 공고는 `404`를 반환한다.
+
+규칙:
+
+- `status`: `open`, `upcoming`, `closed`
+- 날짜 계산은 서버의 `deadline` 원본 값을 기준으로 하고, `D-n` 표시는 프론트에서 계산
+- `officialUrl`은 허용된 `https` URL만 저장
+- 홈의 `featured=true` 결과는 최대 3건을 우선순위 순으로 반환
+- 외부 수집 데이터라면 출처 URL, 마지막 동기화 시각과 중복 방지 키를 별도 저장

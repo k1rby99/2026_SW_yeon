@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, Check, Send, Sparkles } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
-import { LoadingSpinner } from '../components/common/LoadingSpinner';
+import { AnalyzingState } from '../components/common/AnalyzingState';
 import { useInviteCandidate, useRoom, useRoomCandidates } from '../hooks/useRooms';
 import { useUiStore } from '../store/uiStore';
 import { useTranslation } from '../i18n';
@@ -26,7 +26,8 @@ export function RoomInvitePage() {
     }
   };
 
-  if (isLoading) return <LoadingSpinner />;
+  // 초대 후보도 AI가 고른다(첫 회 10초 안팎).
+  if (isLoading) return <div className="room-workspace-page"><AnalyzingState title={t.analyzing.candidates.title} steps={t.analyzing.candidates.steps} /></div>;
   return <div className="room-workspace-page">
     <header className="room-workspace-header"><Link to={`/rooms/${id}`} aria-label={t.common.back}><ArrowLeft /></Link><div><span>{room?.title}</span><h1>{t.roomManagement.inviteTitle}</h1></div></header>
     <div className="room-workspace-intro"><Sparkles /><div><strong>{t.roomManagement.inviteIntroTitle}</strong><span>{t.roomManagement.inviteIntroDescription}</span></div></div>

@@ -17,7 +17,7 @@ export function useLogin() {
 
 export function useSignup() {
   return useMutation({
-    mutationFn: (payload: { email: string; password: string }) =>
+    mutationFn: (payload: { name: string; email: string; password: string }) =>
       apiClient.post<AuthResponse>('/api/auth/signup', payload),
     onSuccess: (data) => tokenStore.set(data.accessToken, data.refreshToken),
   });
