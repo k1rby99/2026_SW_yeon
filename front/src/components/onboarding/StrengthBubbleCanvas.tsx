@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { X } from 'lucide-react';
 import { Bodies, Body, Composite, Engine, Events, Runner, Sleeping } from 'matter-js';
 import type { Body as MatterBody } from 'matter-js';
 
@@ -22,14 +23,16 @@ const RADII: Record<StrengthLevel, number> = { 1: 36, 2: 49, 3: 64 };
 export function StrengthBubbleCanvas({
   items,
   onGrow,
+  onRemove,
 }: {
   items: StrengthBubbleItem[];
   onGrow: (id: string) => void;
+  onRemove: (id: string) => void;
 }) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Engine | null>(null);
   const bodiesRef = useRef(new Map<string, BubbleBody>());
-  const elementsRef = useRef(new Map<string, HTMLButtonElement>());
+  const elementsRef = useRef(new Map<string, HTMLDivElement>());
   const wallsRef = useRef<MatterBody[]>([]);
 
   useEffect(() => {
@@ -96,6 +99,17 @@ export function StrengthBubbleCanvas({
 
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
+    const activeIds = new Set(items.map((item) => item.id));
+
+    bodiesRef.current.forEach(({ body }, id) => {
+      if (activeIds.has(id)) return;
+      Composite.remove(engine.world, body);
+      bodiesRef.current.delete(id);
+    });
+
+    if (bodiesRef.current.size > 0) {
+      bodiesRef.current.forEach(({ body }) => Sleeping.set(body, false));
+    }
 
     items.forEach((item, index) => {
       const radius = RADII[item.level];
@@ -146,20 +160,27 @@ export function StrengthBubbleCanvas({
   return (
     <div ref={canvasRef} className="onboarding-bubble-canvas" aria-label="선택한 역량 버블">
       {items.map((item) => (
-        <button
+        <div
           key={item.id}
           ref={(element) => {
             if (element) elementsRef.current.set(item.id, element);
             else elementsRef.current.delete(item.id);
           }}
-          type="button"
-          className={`strength-bubble level-${item.level}`}
-          onClick={() => onGrow(item.id)}
-          aria-label={`${item.label}, ${LEVEL_LABELS[item.level - 1]}${item.level < 3 ? ', 탭하여 수준 올리기' : ', 탭하여 초급으로 변경'}`}
+          className={`strength-bubble-shell level-${item.level}`}
         >
-          <span>{item.label}</span>
-          <small>{LEVEL_LABELS[item.level - 1]}</small>
-        </button>
+          <button
+            type="button"
+            className={`strength-bubble level-${item.level}`}
+            onClick={() => onGrow(item.id)}
+            aria-label={`${item.label}, ${LEVEL_LABELS[item.level - 1]}${item.level < 3 ? ', 탭하여 수준 올리기' : ', 탭하여 초급으로 변경'}`}
+          >
+            <span>{item.label}</span>
+            <small>{LEVEL_LABELS[item.level - 1]}</small>
+          </button>
+          <button type="button" className="strength-bubble-remove" onClick={() => onRemove(item.id)} aria-label={`${item.label} 강점 삭제`}>
+            <X aria-hidden="true" />
+          </button>
+        </div>
       ))}
     </div>
   );

@@ -10,8 +10,8 @@ const ko = {
 
   nav: {
     home: '홈',
-    goals: '목표',
-    matches: '매칭',
+    goals: '인연찾기',
+    matches: '나의 인연',
     profile: '프로필',
   },
 
@@ -100,7 +100,7 @@ const ko = {
     strengthTitlePrefix: '당신의 ',
     strengthTitleHighlight: '강점을 원의 크기',
     strengthTitleSuffix: '로 표현해보세요',
-    strengthGuide: '항목을 탭하면 원이 생기고, 원을 다시 탭하면 크기가 커지며 역량 수준이 올라갑니다.',
+    strengthGuide: '원을 탭하면 역량 수준이 올라가고, 오른쪽 위의 × 버튼으로 선택을 취소할 수 있어요.',
     unselectedStrengthsLabel: '아직 선택하지 않은 역량',
     strengthCanvasLabel: '선택한 역량 버블',
     showcaseStep: 'STEP 04 · 나를 보여주기',
@@ -289,6 +289,20 @@ const ko = {
     messageFailed: '메시지를 보내지 못했어요.',
   },
 
+  roomMembers: {
+    title: '함께하는 사람들',
+    count: (count: number) => `${count}명`,
+    ownerBadge: '방장',
+    profileTitle: '참여자 프로필',
+    skills: '주요 역량',
+    interests: '관심사',
+    collabStyle: '협업 스타일',
+    projects: '프로젝트 경험',
+    links: '활동 링크',
+    blog: '블로그 · 포트폴리오',
+    instagram: '인스타그램',
+  },
+
   home: {
     title: '추천',
     eyebrow: '오늘의 새로운 연결',
@@ -296,21 +310,37 @@ const ko = {
     notifications: '알림 확인',
     contestsTitle: '공모전, 공고 등',
     swipeHint: '옆으로 넘겨보세요',
+    viewAll: '전체보기',
     recommendationsTitle: '인연 추천',
     recommendationsSubtitle: '강점과 목표가 잘 맞는 인연이에요',
     complementMatch: '상호보완 매칭',
     defaultRole: '협업 파트너',
     candidateNames: ['김서윤', '박지후', '이하린', '정도윤', '한유진', '오시우'],
-    contests: [
-      { category: 'AI · 소프트웨어', title: '2026 AI 서비스 아이디어 경진대회', deadline: 'D-12' },
-      { category: '공공데이터', title: '공공데이터 활용 창업 경진대회', deadline: 'D-21' },
-      { category: '스타트업 · 디자인', title: '청년 프로덕트 디자인 챌린지', deadline: 'D-30' },
-    ],
     emptyNoCandidatesTitle: '아직 적합한 후보가 없어요',
     emptyNoCandidatesDescription: '조건에 맞는 협업 상대가 나타나면 알려드릴게요.',
     emptyNoGoalTitle: '목표를 먼저 등록해주세요',
     emptyNoGoalDescription: '목표를 등록하면 보완형 협업 상대를 추천해드려요.',
     goToGoals: '목표 등록하러 가기',
+  },
+
+  opportunities: {
+    eyebrow: '새로운 기회 발견',
+    title: '공고 · 공모전',
+    detailTitle: '공고 상세',
+    searchPlaceholder: '공고명, 주최기관, 키워드 검색',
+    filterLabel: '공고 유형',
+    filters: { all: '전체', contest: '공모전', announcement: '공고' },
+    types: { contest: '공모전', announcement: '공고' },
+    status: { open: '접수 중', upcoming: '접수 예정', closed: '마감' },
+    resultTitle: '모든 기회',
+    resultCount: (count: number) => `${count}건`,
+    empty: '조건에 맞는 공고가 없어요.',
+    organizer: '주최 · 주관',
+    period: '접수 기간',
+    eligibility: '참가 대상',
+    benefits: '지원 및 혜택',
+    findConnection: '이 공고로 인연 찾기',
+    openOfficial: '공식 페이지',
   },
 
   recommendationDetail: {

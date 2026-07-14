@@ -1,19 +1,22 @@
 import { useState } from 'react';
 import { BrainCircuit, Plus, Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { RoomCard } from '../components/room/RoomCard';
 import { useAnalyzeGoal, useRecommendedRooms } from '../hooks/useRooms';
 import { useUiStore } from '../store/uiStore';
 import { useTranslation } from '../i18n';
+import type { Opportunity } from '../types/domain';
 
 export function GoalsPage() {
   const { t } = useTranslation();
   const pushToast = useUiStore((state) => state.pushToast);
   const navigate = useNavigate();
+  const location = useLocation();
+  const opportunity = (location.state as { opportunity?: Opportunity } | null)?.opportunity;
   const analyzeGoal = useAnalyzeGoal();
   const { data: rooms } = useRecommendedRooms();
-  const [text, setText] = useState('');
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const [text, setText] = useState(opportunity ? `${opportunity.title}에 함께 참여할 인연을 찾고 싶어요.` : '');
+  const [keywords, setKeywords] = useState<string[]>(opportunity ? [opportunity.type === 'contest' ? '공모전' : opportunity.category] : []);
 
   const toggleKeyword = (keyword: string) => {
     setKeywords((current) => current.includes(keyword) ? current.filter((item) => item !== keyword) : [...current, keyword]);

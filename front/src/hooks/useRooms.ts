@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../api/client';
-import type { ConnectionRoom, GoalAnalysis, RoomApplication, RoomCandidate, RoomMessage, RoomStatus, RoomUpsertPayload } from '../types/domain';
+import type { ConnectionRoom, GoalAnalysis, RoomApplication, RoomCandidate, RoomMemberProfile, RoomMemberSummary, RoomMessage, RoomStatus, RoomUpsertPayload } from '../types/domain';
 
 export function useRecommendedRooms() {
   return useQuery<{ items: ConnectionRoom[]; nextCursor: string | null }>({
@@ -110,5 +110,21 @@ export function useSendRoomMessage(roomId: string | undefined) {
   return useMutation({
     mutationFn: (content: string) => apiClient.post<RoomMessage>(`/api/rooms/${roomId}/messages`, { content }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['rooms', roomId, 'messages'] }),
+  });
+}
+
+export function useRoomMembers(roomId: string | undefined) {
+  return useQuery<RoomMemberSummary[]>({
+    queryKey: ['rooms', roomId, 'members'],
+    queryFn: () => apiClient.get(`/api/rooms/${roomId}/members`),
+    enabled: !!roomId,
+  });
+}
+
+export function useRoomMemberProfile(roomId: string | undefined, memberId: string | undefined) {
+  return useQuery<RoomMemberProfile>({
+    queryKey: ['rooms', roomId, 'members', memberId],
+    queryFn: () => apiClient.get(`/api/rooms/${roomId}/members/${memberId}`),
+    enabled: !!roomId && !!memberId,
   });
 }

@@ -146,6 +146,14 @@ export function OnboardingPage() {
     });
   };
 
+  const removeStrength = (strengthId: string) => {
+    setStrengthLevels((current) => {
+      const next = { ...current };
+      delete next[strengthId];
+      return next;
+    });
+  };
+
   const handleComplete = async () => {
     const topicLabels = TOPICS.filter((item) => selectedTopics.includes(item.id)).map((item) => item.label);
     const goalLabels = GOALS.filter((item) => selectedGoals.includes(item.id)).map((item) => item.label);
@@ -302,6 +310,7 @@ export function OnboardingPage() {
                   level: strengthLevels[item.id],
                 }))}
                 onGrow={growStrength}
+                onRemove={removeStrength}
               />
             </section>
 

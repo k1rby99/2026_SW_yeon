@@ -20,6 +20,9 @@ import { RoomEditorPage } from './pages/RoomEditorPage';
 import { RoomInvitePage } from './pages/RoomInvitePage';
 import { RoomApplicationsPage } from './pages/RoomApplicationsPage';
 import { RoomChatPage } from './pages/RoomChatPage';
+import { RoomMemberProfilePage } from './pages/RoomMemberProfilePage';
+import { OpportunitiesPage } from './pages/OpportunitiesPage';
+import { OpportunityDetailPage } from './pages/OpportunityDetailPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,6 +59,9 @@ function App() {
                 <Route path="/rooms/:id/invite" element={<RoomInvitePage />} />
                 <Route path="/rooms/:id/applications" element={<RoomApplicationsPage />} />
                 <Route path="/rooms/:id/chat" element={<RoomChatPage />} />
+                <Route path="/rooms/:id/members/:memberId" element={<RoomMemberProfilePage />} />
+                <Route path="/opportunities" element={<OpportunitiesPage />} />
+                <Route path="/opportunities/:id" element={<OpportunityDetailPage />} />
               </Route>
             </Route>
           </Route>

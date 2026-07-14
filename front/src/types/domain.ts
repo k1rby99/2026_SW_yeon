@@ -147,3 +147,45 @@ export interface RoomMessage {
   content: string;
   createdAt: string;
 }
+
+export interface RoomMemberSummary {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  skillTags: string[];
+  isOwner: boolean;
+  joinedAt: string;
+}
+
+export interface RoomMemberProfile extends RoomMemberSummary {
+  interests: string[];
+  collabStyle: string;
+  projectHistory: string[];
+  socialLinks?: {
+    blog?: string;
+    instagram?: string;
+    github?: string;
+  };
+}
+
+export type OpportunityType = 'contest' | 'announcement';
+export type OpportunityStatus = 'open' | 'upcoming' | 'closed';
+
+export interface Opportunity {
+  id: string;
+  type: OpportunityType;
+  status: OpportunityStatus;
+  category: string;
+  title: string;
+  organizer: string;
+  summary: string;
+  imageUrl: string;
+  tags: string[];
+  deadline: string;
+  period: string;
+  eligibility: string;
+  benefits: string[];
+  officialUrl: string;
+  featured: boolean;
+}

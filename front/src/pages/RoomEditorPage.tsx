@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { ArrowLeft, Check, Lock, Save, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check, Lock, Plus, Save, Sparkles } from 'lucide-react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useCreateRoom, useRoom, useUpdateRoom } from '../hooks/useRooms';
@@ -106,7 +106,7 @@ export function RoomEditorPage() {
           <fieldset><legend>{t.roomManagement.applicationModeLabel}</legend><div className="room-choice-group">{(['approval', 'instant'] as const).map((value) => <button key={value} type="button" className={form.applicationMode === value ? 'is-selected' : ''} onClick={() => setField('applicationMode', value)}>{form.applicationMode === value && <Check />}{t.roomManagement.applicationModes[value]}</button>)}</div></fieldset>
         </section>
 
-        <button className="room-submit-button" type="submit" disabled={pending}><Save />{pending ? t.common.saving : editing ? t.roomManagement.saveSettings : t.roomManagement.createSubmit}</button>
+        <button className="room-submit-button" type="submit" disabled={pending}>{editing ? <Save /> : <Plus />}{pending ? t.common.saving : editing ? t.roomManagement.saveSettings : t.roomManagement.createSubmit}</button>
       </form>
     </div>
   );

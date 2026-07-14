@@ -1,21 +1,18 @@
 import { ArrowRight, Bell } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { RoomCard } from '../components/room/RoomCard';
 import { EmptyState } from '../components/common/EmptyState';
 import { SkeletonCard } from '../components/common/SkeletonCard';
 import { useRecommendedRooms } from '../hooks/useRooms';
 import { useGoalHistory } from '../hooks/useGoals';
 import { useTranslation } from '../i18n';
-
-const CONTEST_IMAGES = [
-  '/contests/ai-innovation.png',
-  '/contests/public-data.png',
-  '/contests/startup-design.png',
-] as const;
+import { useOpportunities } from '../hooks/useOpportunities';
 
 export function HomePage() {
   const { t } = useTranslation();
   const { data, isLoading } = useRecommendedRooms();
   const { data: goals } = useGoalHistory();
+  const { data: opportunities } = useOpportunities(undefined, true);
 
   const recommendations = data?.items ?? [];
   const hasRegisteredGoal = (goals?.length ?? 0) > 0;
@@ -36,18 +33,18 @@ export function HomePage() {
       <section className="home-section">
         <div className="home-section-heading">
           <h2>{t.home.contestsTitle}</h2>
-          <span>{t.home.swipeHint}</span>
+          <Link to="/opportunities">{t.home.viewAll}<ArrowRight /></Link>
         </div>
         <div className="home-contest-list">
-          {t.home.contests.map((contest, index) => (
-            <article className="home-contest-card" key={contest.title}>
-              <img src={CONTEST_IMAGES[index]} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
+          {opportunities?.items.map((opportunity, index) => (
+            <Link to={`/opportunities/${opportunity.id}`} className="home-contest-card" key={opportunity.id}>
+              <img src={opportunity.imageUrl} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
               <div>
-                <span className="home-contest-category">{contest.category}</span>
-                <h3>{contest.title}</h3>
-                <span className="home-contest-deadline">{contest.deadline}</span>
+                <span className="home-contest-category">{opportunity.category}</span>
+                <h3>{opportunity.title}</h3>
+                <span className="home-contest-deadline">{opportunity.deadline.replaceAll('-', '.')}</span>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>
