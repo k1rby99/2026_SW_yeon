@@ -2,7 +2,7 @@ import { ArrowRight, Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RoomCard } from '../components/room/RoomCard';
 import { EmptyState } from '../components/common/EmptyState';
-import { SkeletonCard } from '../components/common/SkeletonCard';
+import { AnalyzingState } from '../components/common/AnalyzingState';
 import { useRecommendedRooms } from '../hooks/useRooms';
 import { useGoalHistory } from '../hooks/useGoals';
 import { useTranslation } from '../i18n';
@@ -58,9 +58,8 @@ export function HomePage() {
         </div>
 
         {isLoading ? (
-          <div className="home-profile-list">
-            {Array.from({ length: 3 }).map((_, index) => <SkeletonCard key={index} />)}
-          </div>
+          // 추천은 AI가 계산한다. 첫 회 10초 안팎이 걸리므로 스켈레톤만으로는 멈춘 것처럼 보인다.
+          <AnalyzingState title={t.analyzing.rooms.title} steps={t.analyzing.rooms.steps} />
         ) : recommendations.length > 0 ? (
           <div className="home-room-list">
             {recommendations.map((room) => <RoomCard key={room.id} room={room} compact />)}

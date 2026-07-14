@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { RecommendationDetail } from '../components/recommendation/RecommendationDetail';
 import { ActionButtons } from '../components/recommendation/ActionButtons';
-import { LoadingSpinner } from '../components/common/LoadingSpinner';
+import { AnalyzingState } from '../components/common/AnalyzingState';
 import { EmptyState } from '../components/common/EmptyState';
 import { useRecommendation } from '../hooks/useRecommendations';
 import { useTranslation } from '../i18n';
@@ -12,7 +12,7 @@ export function RecommendationDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: recommendation, isLoading } = useRecommendation(id);
 
-  if (isLoading) return <LoadingSpinner label={t.recommendationDetail.loading} />;
+  if (isLoading) return <AnalyzingState title={t.analyzing.people.title} steps={t.analyzing.people.steps} />;
 
   if (!recommendation) {
     return (

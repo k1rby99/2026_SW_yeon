@@ -30,10 +30,11 @@ export function SignupPage() {
     formState: { errors, isSubmitting },
   } = useForm<SignupFormValues>();
 
-  const onSubmit = async ({ email, password }: SignupFormValues) => {
+  const onSubmit = async ({ name, email, password }: SignupFormValues) => {
     setSubmitError(null);
     try {
-      await signup.mutateAsync({ email, password });
+      // 이름은 방장·채팅 발신자·멤버 목록에 그대로 노출되므로 가입 시 함께 보낸다.
+      await signup.mutateAsync({ name, email, password });
       navigate('/onboarding', { replace: true });
     } catch {
       setSubmitError(t.auth.signup.failed);

@@ -30,6 +30,52 @@ const ko = {
     back: '뒤로',
   },
 
+  // AI 분석이 도는 동안(첫 회 10초 안팎) 보여주는 문구.
+  // 무엇이 진행 중인지 단계로 알려주고, 다음부터는 빠르다는 사실도 함께 밝힌다.
+  analyzing: {
+    hint: '처음 한 번만 시간이 걸려요. 다음부터는 바로 열려요.',
+    rooms: {
+      title: 'AI가 회원님께 맞는 인연을 찾고 있어요',
+      steps: [
+        '프로필과 목표를 읽는 중',
+        '가능성 있는 인연을 넓게 추리는 중',
+        '가장 잘 맞는 인연을 고르는 중',
+      ],
+    },
+    candidates: {
+      title: 'AI가 초대할 사람을 고르고 있어요',
+      steps: [
+        '방의 목표와 지금 팀 구성을 읽는 중',
+        '함께할 만한 사람을 넓게 추리는 중',
+        '가장 보탬이 될 사람을 고르는 중',
+      ],
+    },
+    goal: {
+      title: 'AI가 목표를 해석하고 있어요',
+      steps: [
+        '문장에서 목표를 정리하는 중',
+        '함께 찾아야 할 역할을 뽑는 중',
+        '목표에 맞는 인연 방을 고르는 중',
+      ],
+    },
+    people: {
+      title: 'AI가 이 사람과의 접점을 살펴보고 있어요',
+      steps: [
+        '두 사람의 프로필을 견주는 중',
+        '서로 보완할 수 있는 부분을 찾는 중',
+        '추천 이유를 정리하는 중',
+      ],
+    },
+    room: {
+      title: 'AI가 이 인연을 살펴보고 있어요',
+      steps: [
+        '방의 목표와 모집 역할을 읽는 중',
+        '회원님의 프로필과 견주는 중',
+        '얼마나 맞는지 정리하는 중',
+      ],
+    },
+  },
+
   auth: {
     login: {
       title: '로그인',
@@ -365,11 +411,24 @@ const ko = {
     eyebrow: '함께하고 있는 인연',
     title: '나의 인연',
     subtitle: '참여 중이거나 직접 만든 인연을 확인하세요.',
+    invitationsTitle: '받은 초대',
+    invitationFrom: '님이 초대했어요',
+    invitationAccept: '수락',
+    invitationDecline: '거절',
+    invitationAccepted: '초대를 수락했어요. 이제 이 인연의 멤버예요.',
+    invitationDeclined: '초대를 거절했어요.',
+    invitationFailed: '처리하지 못했어요. 다시 시도해주세요.',
     filterLabel: '인연 상태',
+    recruiting: '모집 중',
     active: '진행중',
     ended: '종료됨',
-    emptyTitle: '매칭 내역이 없어요',
-    emptyDescription: '추천을 수락하면 이곳에 표시돼요.',
+    recruitingRooms: '모집 중인 인연',
+    emptyRecruitingTitle: '모집 중인 인연이 없어요',
+    emptyRecruitingDescription: '인연을 만들면 이곳에서 신청을 받고 사람을 초대할 수 있어요.',
+    emptyActiveTitle: '진행 중인 인연이 없어요',
+    emptyActiveDescription: '모집을 마감하면 이곳으로 옮겨져요.',
+    emptyEndedTitle: '종료된 인연이 없어요',
+    emptyEndedDescription: '마무리한 인연이 이곳에 쌓여요.',
     defaultCounterpart: '협업 상대',
     giveFeedback: '피드백 남기기',
     endMatch: '종료하기',

@@ -513,14 +513,19 @@ body {
 
 .tab-segmented {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* 탭 개수를 하드코딩하지 않는다. 상태가 늘면 열도 따라 늘어난다. */
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   gap: 4px;
   padding: 4px;
   border-radius: 8px;
   background: #f1f0f4;
 }
-.tab-segmented button { min-height: 40px; border: 0; border-radius: 6px; background: transparent; color: #8d8b98; font-size: 12px; font-weight: 750; }
+.tab-segmented button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 40px; border: 0; border-radius: 6px; background: transparent; color: #8d8b98; font-size: 12px; font-weight: 750; }
 .tab-segmented button.is-selected { background: #fff; color: #625ca8; box-shadow: 0 3px 10px rgba(48,44,75,.08); }
+/* 탭별 개수. 방금 만든 인연이 어느 탭에 있는지 알려주는 단서다. */
+.tab-segmented-count { display: inline-grid; place-items: center; min-width: 17px; height: 17px; padding: 0 5px; border-radius: 999px; background: #e3e1ec; color: #6f6a94; font-size: 10px; font-weight: 800; }
+.tab-segmented button.is-selected .tab-segmented-count { background: #ece9fa; color: #5b53a8; }
 .matches-room-list { margin-top: 24px; }
 .matches-list-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
 .matches-list-heading strong { color: #363548; font-size: 13px; }
@@ -2216,5 +2221,306 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .home-header {
     animation: none;
+  }
+}
+
+/* AI 분석 대기 상태 — 첫 회 10초 안팎이 걸리므로 진행 단계를 짚어 준다. */
+.analyzing-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 18px;
+  border: 1px solid #e6e5ef;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fbfaff 0%, #ffffff 100%);
+  box-shadow: 0 8px 24px rgba(27, 27, 58, 0.05);
+  animation: analyzing-enter 480ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.analyzing-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.analyzing-heading strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-brand-navy);
+  overflow-wrap: anywhere;
+}
+
+.analyzing-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: linear-gradient(105deg, #747dcc 0%, #9a7fc2 55%, #bd89b3 100%);
+  color: #ffffff;
+  animation: analyzing-pulse 1800ms ease-in-out infinite;
+}
+
+.analyzing-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.analyzing-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.analyzing-steps li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #9a99ab;
+  transition: color 190ms ease;
+}
+
+.analyzing-steps li.is-active {
+  color: var(--color-brand-navy);
+  font-weight: 700;
+}
+
+.analyzing-steps li.is-done {
+  color: #6f6e80;
+}
+
+.analyzing-step-mark {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #eceaf6;
+  color: var(--color-brand-indigo);
+}
+
+.analyzing-steps li.is-done .analyzing-step-mark {
+  background: #e2e0f7;
+}
+
+.analyzing-step-mark svg {
+  width: 11px;
+  height: 11px;
+}
+
+.analyzing-step-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c8c6d8;
+}
+
+.analyzing-steps li.is-active .analyzing-step-dot {
+  background: var(--color-brand-indigo);
+  animation: analyzing-pulse 1200ms ease-in-out infinite;
+}
+
+/* 남은 시간을 알 수 없으므로 채워지는 바가 아니라 흐르는 바를 쓴다. */
+.analyzing-bar {
+  overflow: hidden;
+  height: 4px;
+  border-radius: 999px;
+  background: #eceaf6;
+}
+
+.analyzing-bar span {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(105deg, #747dcc 0%, #9a7fc2 55%, #bd89b3 100%);
+  animation: analyzing-slide 1600ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.analyzing-hint {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #9a99ab;
+}
+
+@keyframes analyzing-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+}
+
+@keyframes analyzing-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes analyzing-slide {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(250%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analyzing-panel,
+  .analyzing-icon,
+  .analyzing-step-dot {
+    animation: none;
+  }
+
+  /* 모션을 끄면 흐르는 바 대신 정적인 막대를 보여준다. */
+  .analyzing-bar span {
+    width: 100%;
+    animation: none;
+  }
+}
+
+/* 받은 초대함 — 나의 인연 화면 상단. 답하지 않은 초대만 쌓인다. */
+.invitation-inbox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.invitation-inbox-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.invitation-inbox-heading svg {
+  width: 15px;
+  height: 15px;
+  color: var(--color-brand-indigo);
+}
+
+.invitation-inbox-heading strong {
+  color: #363548;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.invitation-inbox-heading span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ece9fa;
+  color: #5b53a8;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.invitation-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #e2e0f0;
+  border-radius: 14px;
+  background: #fbfaff;
+  animation: analyzing-enter 420ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.invitation-card-body span {
+  display: block;
+  margin-bottom: 3px;
+  color: #8882bd;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.invitation-card-body strong {
+  display: block;
+  color: #29283b;
+  font-size: 14px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.invitation-card-body p {
+  margin: 6px 0 0;
+  color: #7d7c8c;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.invitation-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.invitation-card-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 44px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 750;
+  transition: transform 170ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 170ms ease;
+}
+
+.invitation-card-actions button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.invitation-card-actions button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.invitation-decline {
+  border: 1px solid #dedee7;
+  background: #ffffff;
+  color: #7d7c8c;
+}
+
+.invitation-accept {
+  border: 0;
+  background: linear-gradient(105deg, #747dcc 0%, #9a7fc2 55%, #bd89b3 100%);
+  color: #ffffff;
+}
+
+@media (hover: hover) {
+  .invitation-card-actions button:not(:disabled):hover {
+    transform: translate3d(0, -2px, 0);
+    box-shadow: 0 8px 18px rgba(48, 44, 75, 0.14);
+  }
+}
+
+.invitation-card-actions button:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invitation-card,
+  .invitation-card-actions button {
+    animation: none;
+    transition: none;
+  }
+
+  .invitation-card-actions button:not(:disabled):hover,
+  .invitation-card-actions button:not(:disabled):active {
+    transform: none;
   }
 }

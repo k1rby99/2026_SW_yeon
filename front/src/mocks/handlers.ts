@@ -12,6 +12,7 @@ import type {
   RoomMessage,
   RoomMemberProfile,
   Opportunity,
+  ReceivedInvitation,
 } from '../types/domain';
 
 // front_request.md §7 API 연동 명세 전체를 스텁한다.
@@ -113,6 +114,18 @@ const candidatePool: RoomCandidate[] = [
     bio: '접근성과 인터랙션을 중요하게 생각하는 프론트엔드 개발자입니다.',
     skillTags: ['React', 'TypeScript', 'React Native'], interests: ['모바일', '해커톤'],
     matchScore: 82, reason: '모바일 구현 경험이 풍부하고 단기 집중 협업 경험이 있어요.', invitationStatus: 'pending',
+  },
+];
+
+// 목업에서도 '받은 초대'를 하나 심어 둔다. 백엔드와 같은 형태여야 한다.
+const receivedInvitations: ReceivedInvitation[] = [
+  {
+    id: 'invitation-received-1',
+    status: 'pending',
+    message: '데이터 분석 쪽으로 함께 나가면 좋을 것 같아요.',
+    createdAt: '2026-07-13T09:00:00Z',
+    room: rooms[1],
+    inviter: { id: 'user-2', name: '박지후' },
   },
 ];
 
@@ -287,6 +300,7 @@ export const handlers = [
       visibilityScope: body.visibilityScope ?? 'public',
       onboardingCompleted: true,
       bio: body.bio,
+      strengths: body.strengths,
       socialLinks: body.socialLinks,
     };
     return HttpResponse.json(profile);
@@ -354,6 +368,32 @@ export const handlers = [
     }
     candidate.invitationStatus = 'pending';
     return HttpResponse.json({ id: `invitation-${Date.now()}`, status: 'pending' }, { status: 201 });
+  }),
+
+  // 내가 받은 초대. 목업에서는 다른 사람이 나를 초대하는 상황을 하나 심어 둔다.
+  http.get('/api/invitations', () => {
+    return HttpResponse.json(receivedInvitations.filter((item) => item.status === 'pending'));
+  }),
+
+  http.patch('/api/invitations/:id', async ({ params, request }) => {
+    const invitation = receivedInvitations.find((item) => item.id === params.id);
+    if (!invitation) return new HttpResponse(null, { status: 404 });
+    if (invitation.status !== 'pending') {
+      return HttpResponse.json({ code: 'INVITATION_ALREADY_DECIDED', message: '이미 처리한 초대예요.' }, { status: 409 });
+    }
+    const body = (await request.json()) as { action: 'accept' | 'decline' };
+    if (body.action === 'accept') {
+      invitation.status = 'accepted';
+      const room = rooms.find((item) => item.id === invitation.room.id);
+      if (room) {
+        room.membershipRole = 'member';
+        room.applicationStatus = 'approved';
+        room.memberCount += 1;
+      }
+    } else {
+      invitation.status = 'declined';
+    }
+    return HttpResponse.json(invitation);
   }),
 
   http.get('/api/rooms/:id/applications', ({ params }) => {

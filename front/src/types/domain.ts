@@ -1,5 +1,21 @@
 // front_request.md §6 데이터 타입 정의 기준. 서버 응답 타입의 단일 진실 소스로 사용한다.
 
+export type StrengthLevel = 1 | 2 | 3;
+
+export interface Strength {
+  key: string;
+  label: string;
+  level: StrengthLevel;
+}
+
+/** 프로필 분석 에이전트의 산출물. 사용자가 직접 쓰는 값이 아니라 서버가 채운다. */
+export interface ProfileInsight {
+  summary: string;
+  collaborationStyle: string;
+  derivedTags: string[];
+  strengths: Strength[];
+}
+
 export interface Profile {
   id: string;
   userId: string;
@@ -10,6 +26,9 @@ export interface Profile {
   visibilityScope: 'public' | 'limited' | 'private';
   onboardingCompleted: boolean;
   bio?: string;
+  role?: string;
+  strengths?: Strength[];
+  insight?: ProfileInsight;
   socialLinks?: {
     blog?: string;
     instagram?: string;
@@ -139,6 +158,16 @@ export interface RoomApplication {
   message: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
+}
+
+/** 내가 받은 초대. 어떤 방에 누가 불렀는지가 함께 온다. */
+export interface ReceivedInvitation {
+  id: string;
+  status: 'none' | 'pending' | 'accepted' | 'declined';
+  message: string;
+  createdAt: string;
+  room: ConnectionRoom;
+  inviter: { id: string; name: string };
 }
 
 export interface RoomMessage {

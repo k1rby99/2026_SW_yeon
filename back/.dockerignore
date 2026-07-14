@@ -1,0 +1,12 @@
+.venv
+venv
+__pycache__
+*.py[cod]
+.pytest_cache
+.git
+*.log
+
+# 로컬 SQLite 파일은 이미지에 넣지 않는다(컨테이너에서 새로 만든다).
+*.db
+
+.env

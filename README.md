@@ -31,15 +31,27 @@ docker compose up --build
 
 ## API 목업과 실제 백엔드 전환
 
-현재 Compose 기본값은 기존 UI 개발 흐름을 유지하기 위해 MSW 목업을 사용합니다. 실제 백엔드 API를 연결할 때 `docker-compose.yml`의 값을 아래처럼 변경합니다.
+**기본값은 실제 백엔드입니다.** 프론트의 `/api/*` 요청은 Vite 개발 서버가 백엔드로 프록시하므로 브라우저에서 별도 호스트를 지정할 필요가 없습니다.
+데모 계정은 `demo@yeon.dev` / `yeon1234` 입니다([`back/README.md`](back/README.md) 참고).
 
-```yaml
-environment:
-  VITE_API_MOCKING: "false"
-  VITE_API_TARGET: http://backend:8000
+백엔드 없이 UI만 보려면 MSW 목업을 켭니다.
+
+```bash
+VITE_API_MOCKING=true docker compose up --build
 ```
 
-프론트의 `/api/*` 요청은 Vite 개발 서버가 백엔드로 프록시하므로 브라우저에서 별도 호스트를 지정할 필요가 없습니다.
+목업을 켜면 프론트가 브라우저 안에서 응답을 만들어 내므로 백엔드 상태와 무관하게 화면이 뜹니다. 대신 실제 데이터는 저장되지 않습니다.
+
+## AI 분석 엔진
+
+목표 해석과 추천은 Anthropic API 기반 에이전트 4종이 담당합니다(프로필 분석, 목표 해석, 후보군 형성, 대상 선별).
+기본값은 키가 필요 없는 규칙 기반 목업이며, 에이전트를 켜려면:
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-... YEON_ANALYSIS_ENGINE=agent docker compose up --build
+```
+
+자세한 내용은 [`back/README.md`](back/README.md#분석-에이전트)를 참고합니다.
 
 ## 로컬에서 개별 실행
 
